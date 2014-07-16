@@ -12,7 +12,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
 public class KeyHandler {
 
-	public KeyBinding key = new KeyBinding("ChatFlow", Keyboard.KEY_F7, "key.categories.multiplayer");
+	public KeyBinding key = new KeyBinding("ChatFlow", Keyboard.KEY_F12, "key.categories.multiplayer");
 
 	public KeyHandler() {
 		ClientRegistry.registerKeyBinding(key);

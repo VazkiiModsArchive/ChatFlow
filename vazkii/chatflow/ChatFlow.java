@@ -1,33 +1,38 @@
 package vazkii.chatflow;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "ChatFlow", name = "ChatFlow", version = "1")
+@Mod(modid = "ChatFlow", name = "ChatFlow", version = "1.1")
 public class ChatFlow {
 
 	public static List<Replacement> replacements = new ArrayList();
 
+	static File saveFileLegacy;
 	static File saveFile;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		MinecraftForge.EVENT_BUS.register(new MessageMeddler());
 		FMLCommonHandler.instance().bus().register(new KeyHandler());
+		ToastHandler h = new ToastHandler();
+		MinecraftForge.EVENT_BUS.register(h);
+		FMLCommonHandler.instance().bus().register(h);
 
-		saveFile = event.getSuggestedConfigurationFile();
+		saveFileLegacy = event.getSuggestedConfigurationFile();
+		saveFile = new File(saveFileLegacy.getParentFile(), "ChatFlow.dat");
+
 		loadReplacements();
 	}
 
@@ -36,34 +41,54 @@ public class ChatFlow {
 			if(!saveFile.exists())
 				saveFile.createNewFile();
 
-			BufferedWriter writer = new BufferedWriter(new FileWriter(saveFile));
-			writer.write("# ChatFlow config file. Do *NOT* edit this manually unless you have a very good idea of what you're doing.\n");
+			NBTTagCompound cmp = new NBTTagCompound();
+			int count = replacements.size();
+			cmp.setInteger("count", count);
 
-			for(Replacement r : replacements)
-				r.save(writer);
+			for(int i = 0; i < replacements.size(); i++) {
+				NBTTagCompound cmp_ = new NBTTagCompound();
+				replacements.get(i).write(cmp_);
+				cmp.setTag("repl" + i, cmp_);
+			}
 
-			writer.write(":eof" + (char) 26);
-
-			writer.close();
+			NBTHelper.injectNBTToFile(cmp, saveFile);
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void loadReplacements() {
+		if(saveFileLegacy.exists())
+			loadReplacementsLegacy();
+		else {
+			replacements.clear();
+
+			NBTTagCompound cmp = NBTHelper.getCacheCompound(saveFile);
+			int count = cmp.getInteger("count");
+			for(int i = 0; i < count; i++) {
+				NBTTagCompound cmp_ = cmp.getCompoundTag("repl" + i);
+				Replacement r = Replacement.read(cmp_);
+				replacements.add(r);
+			}
+		}
+	}
+
+	public static void loadReplacementsLegacy() {
 		try {
-			if(!saveFile.exists())
-				saveReplacements();
+			if(!saveFileLegacy.exists())
+				return;
 
 			replacements.clear();
 
-			BufferedReader reader = new BufferedReader(new FileReader(saveFile));
+			BufferedReader reader = new BufferedReader(new FileReader(saveFileLegacy));
 			reader.readLine(); // Skip start comment
 			Replacement r = null;
-			while((r = Replacement.read(reader)) != null)
+			while((r = Replacement.readLegacy(reader)) != null)
 				replacements.add(r);
 
 			reader.close();
+			saveFileLegacy.delete();
+			saveReplacements();
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.EnumChatFormatting;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class GuiEditor extends GuiScreen {
@@ -16,6 +17,7 @@ public class GuiEditor extends GuiScreen {
 	GuiTextField nameField, matcherField, replacementField, testField;
 	static int index = 0;
 	static String test = "";
+	int shiftNotice = 0;
 
 	@Override
 	public void initGui() {
@@ -29,6 +31,8 @@ public class GuiEditor extends GuiScreen {
 		buttonList.add(new GuiButton(3, width / 2 + 70, 30, 20, 20,"+"));
 		buttonList.add(new GuiButton(4, width / 2 - 220, 195, 200, 20,"Regex Help"));
 		buttonList.add(new GuiButton(5, width / 2 + 20, 195, 200, 20,"Formatting Help"));
+		buttonList.add(new GuiButton(6, width - 100, 260, 80, 20, "Chat"));
+		buttonList.add(new GuiButton(7, width / 2 + 100, 30, 80, 20, "Enabled"));
 
 		int border = 60;
 		nameField = new GuiTextField(fontRendererObj, border, 70, width - border * 2, 12);
@@ -72,13 +76,16 @@ public class GuiEditor extends GuiScreen {
 			break;
 		}
 		case 2 : { // Remove
-			ChatFlow.replacements.remove(index);
-			if(ChatFlow.replacements.size() == 0)
-				ChatFlow.replacements.add(new Replacement());
+			if(isShiftKeyDown()) {
+				ChatFlow.replacements.remove(index);
+				if(ChatFlow.replacements.size() == 0)
+					ChatFlow.replacements.add(new Replacement());
 
-			if(index >= ChatFlow.replacements.size())
-				index = ChatFlow.replacements.size() - 1;
-			updateText();
+				if(index >= ChatFlow.replacements.size())
+					index = ChatFlow.replacements.size() - 1;
+				updateText();
+			} else shiftNotice = 20;
+
 			break;
 		}
 		case 3 : { // Add
@@ -93,6 +100,18 @@ public class GuiEditor extends GuiScreen {
 		}
 		case 5 : { // Formatting Help
 			openWebpage("http://minecraft.gamepedia.com/Formatting_codes");
+			break;
+		}
+		case 6 : { // Chat/Notification
+			Replacement r = ChatFlow.replacements.get(index);
+			r.notification = !r.notification;
+			updateText();
+			break;
+		}
+		case 7 : { // Enabled/Disabled
+			Replacement r = ChatFlow.replacements.get(index);
+			r.enabled = !r.enabled;
+			updateText();
 			break;
 		}
 		}
@@ -111,6 +130,8 @@ public class GuiEditor extends GuiScreen {
 		nameField.setText(r.comment);
 		matcherField.setText(r.matcher);
 		replacementField.setText(r.replacement);
+		((GuiButton) buttonList.get(6)).displayString = r.notification ? "Notification" : "Chat";
+		((GuiButton) buttonList.get(7)).displayString = r.enabled ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.RED + "Disabled";
 	}
 
 	@Override
@@ -126,15 +147,34 @@ public class GuiEditor extends GuiScreen {
 		GL11.glEnable(GL11.GL_BLEND);
 		drawCenteredString(fontRendererObj, index + 1 + " / " + ChatFlow.replacements.size(), width / 2, 35, 0xFFFFFF);
 
+		if(shiftNotice > 0)
+			fontRendererObj.drawStringWithShadow(EnumChatFormatting.RED + "Shift-click to delete", width / 2 - 170, 20, 0xFFFFFF);
+
 		drawCenteredString(fontRendererObj, "Tip: use" + EnumChatFormatting.ITALIC + "^message$" + EnumChatFormatting.RESET + " as the Matcher and an empty Replacement to prevent that message from appearing in chat.", width / 2, replacementField.yPosition + replacementField.height, 0x44FFFFFF);
 		drawCenteredString(fontRendererObj, "Use ~ as a replacement for the control character. Use \\~ to write ~.", width / 2, replacementField.yPosition + replacementField.height + 11, 0x44FFFFFF);
 
 		drawString(fontRendererObj, EnumChatFormatting.BOLD + "Message:", testField.xPosition + 10, testField.yPosition + testField.height + 5, 0xFFFFFF);
 		drawString(fontRendererObj, EnumChatFormatting.BOLD + "Output:", testField.xPosition + 10, testField.yPosition + testField.height + 30, 0xFFFFFF);
 
-		drawString(fontRendererObj, MessageMeddler.meddleWithMessage(test, true, true), testField.xPosition + 10, testField.yPosition + testField.height + 15, 0xFFFFFF);
-		drawString(fontRendererObj, MessageMeddler.meddleWithMessage(test, false, true), testField.xPosition + 10, testField.yPosition + testField.height + 40, 0xFFFFFF);
+		boolean matches = false;
+		try {
+			matches = test.matches(".*" + matcherField.getText() + ".*");
+		} catch(Exception e) { }
+
+		drawString(fontRendererObj, EnumChatFormatting.ITALIC + (ChatFlow.replacements.get(index).notification && matches && ChatFlow.replacements.get(index).enabled ? "(Toast Notification)" : "(Chat Field)"), testField.xPosition + 13 + fontRendererObj.getStringWidth(EnumChatFormatting.BOLD + "Output:"), testField.yPosition + testField.height + 30, 0xFFFFFF);
+
+		String msg = MessageMeddler.meddleWithMessage(test, true, true);
+		String repl = MessageMeddler.meddleWithMessage(test, false, true);
+		drawString(fontRendererObj, msg.isEmpty() ? "<blank>" : msg, testField.xPosition + 10, testField.yPosition + testField.height + 15, msg.isEmpty() ? 0x33FFFFFF : 0xFFFFFF);
+		drawString(fontRendererObj, repl.isEmpty() ? "<blank>" : repl, testField.xPosition + 10, testField.yPosition + testField.height + 40, repl.isEmpty() ? 0x33FFFFFF : 0xFFFFFF);
+
 		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	@Override
+	public void updateScreen() {
+		if(shiftNotice > 0)
+			shiftNotice--;
 	}
 
 	private void drawField(GuiTextField field, String label) {
@@ -142,6 +182,10 @@ public class GuiEditor extends GuiScreen {
 		drawString(fontRendererObj, label, field.xPosition, field.yPosition - 12, 0xAAFFFFFF);
 		drawRect(field.xPosition - 3, field.yPosition - 3, field.xPosition + field.width + 3, field.yPosition + field.height - 1, 0x22000000);
 		drawRect(field.xPosition - 2, field.yPosition - 2, field.xPosition + field.width + 2, field.yPosition + field.height - 2, 0x66000000);
+
+		GL11.glEnable(GL11.GL_BLEND);
+		if(field.getText().isEmpty())
+			drawString(fontRendererObj, "<blank>", field.xPosition, field.yPosition, 0x22FFFFFF);
 
 		field.drawTextBox();
 	}
@@ -153,6 +197,17 @@ public class GuiEditor extends GuiScreen {
 		matcherField.mouseClicked(par1, par2, par3);
 		replacementField.mouseClicked(par1, par2, par3);
 		testField.mouseClicked(par1, par2, par3);
+	}
+
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+
+		int w = Mouse.getEventDWheel();
+		if(w < 0)
+			actionPerformed((GuiButton) buttonList.get(1));
+		else if(w > 0)
+			actionPerformed((GuiButton) buttonList.get(0));
 	}
 
 	@Override
