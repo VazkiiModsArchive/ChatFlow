@@ -1,4 +1,4 @@
-package vazkii.chatflow;
+package vazkii.chatflow.helper;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package vazkii.chatflow;
+package vazkii.chatflow.gui;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -11,6 +11,10 @@ import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
+import vazkii.chatflow.ChatFlow;
+import vazkii.chatflow.handler.MessageMeddler;
+import vazkii.chatflow.helper.Replacement;
 
 public class GuiEditor extends GuiScreen {
 

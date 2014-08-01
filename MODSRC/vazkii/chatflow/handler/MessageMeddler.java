@@ -1,5 +1,7 @@
-package vazkii.chatflow;
+package vazkii.chatflow.handler;
 
+import vazkii.chatflow.ChatFlow;
+import vazkii.chatflow.helper.Replacement;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;

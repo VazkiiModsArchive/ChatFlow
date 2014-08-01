@@ -1,4 +1,4 @@
-package vazkii.chatflow;
+package vazkii.chatflow.handler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -9,6 +9,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
 import org.lwjgl.opengl.GL11;
 
+import vazkii.chatflow.helper.TransientScaledResolution;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;

@@ -1,4 +1,4 @@
-package vazkii.chatflow;
+package vazkii.chatflow.helper;
 
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.MathHelper;

@@ -1,4 +1,4 @@
-package vazkii.chatflow;
+package vazkii.chatflow.helper;
 
 import java.io.BufferedReader;
 import java.io.IOException;

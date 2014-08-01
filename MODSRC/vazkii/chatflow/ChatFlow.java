@@ -7,6 +7,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import vazkii.chatflow.handler.KeyHandler;
+import vazkii.chatflow.handler.MessageMeddler;
+import vazkii.chatflow.handler.ToastHandler;
+import vazkii.chatflow.helper.NBTHelper;
+import vazkii.chatflow.helper.Replacement;
+import vazkii.chatflow.lib.LibMisc;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -14,7 +20,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "ChatFlow", name = "ChatFlow", version = "1.1")
+@Mod(modid = LibMisc.MOD_ID, name = LibMisc.MOD_NAME, version = LibMisc.MOD_VERSION)
 public class ChatFlow {
 
 	public static List<Replacement> replacements = new ArrayList();
