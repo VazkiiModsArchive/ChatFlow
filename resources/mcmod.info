@@ -2,7 +2,7 @@
 {
   "modid": "ChatFlow",
   "name": "ChatFlow",
-  "description": "A mod that allows for control of incoming and outgoing chat messages using RegEx. It also adds toast notifications.",
+  "description": "A mod that allows for control of incoming chat messages using RegEx. It also adds toast notifications.",
   "version": "ANT:VERSION",
   "mcversion": "1.7.2",
   "logoFile": "",
