@@ -1,7 +1,17 @@
 # Eclipse stuff
-.classpath
-.project
-.settings/
+/eclipse
+/.classpath
+/.project
+/.settings
+/.metadata
+/bin
+
+## gradle 
+/.gradle 
+/build 
+/gradle 
+/gradlew 
+/gradlew.bat 
 
 # netbeans
 nbproject
@@ -11,6 +21,10 @@ nbproject
 
 # gradle
 .gradle/
+/build
+
+## ForgeGradle
+/run
 
 # vim
 .*.sw[a-p]
@@ -30,4 +44,9 @@ nbproject
 *.iml
 *.ipr
 *.iws
-.idea/
+/.idea
+/out
+/atlassian-ide-plugin.xml
+
+## Private Stuffs
+/private.properties

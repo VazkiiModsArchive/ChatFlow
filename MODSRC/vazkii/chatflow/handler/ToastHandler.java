@@ -3,18 +3,17 @@ package vazkii.chatflow.handler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
 import org.lwjgl.opengl.GL11;
 
 import vazkii.chatflow.helper.TransientScaledResolution;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ToastHandler {
 
@@ -25,12 +24,12 @@ public class ToastHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void drawDislocationFocusHUD(RenderGameOverlayEvent.Post event) {
-		if (event.type == ElementType.ALL && tooltipDisplayTicks > 0 && !MathHelper.stringNullOrLengthZero(currentTooltip)) {
+		if (event.type == ElementType.ALL && tooltipDisplayTicks > 0 && !(currentTooltip==null||currentTooltip.length()==0)) {
 			Minecraft mc = Minecraft.getMinecraft();
 			TransientScaledResolution var5 = new TransientScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 			int var6 = var5.getScaledWidth();
 			int var7 = var5.getScaledHeight();
-			FontRenderer var8 = mc.fontRenderer;
+			FontRenderer var8 = mc.fontRendererObj;
 
 			int tooltipStartX = (var6 - var8.getStringWidth(currentTooltip)) / 2;
 			int tooltipStartY = var7 - 72;
