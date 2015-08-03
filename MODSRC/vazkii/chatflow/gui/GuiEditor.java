@@ -1,6 +1,7 @@
 package vazkii.chatflow.gui;
 
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URI;
 
 import net.minecraft.client.gui.GuiButton;
@@ -39,10 +40,10 @@ public class GuiEditor extends GuiScreen {
 		buttonList.add(new GuiButton(7, width / 2 + 100, 30, 80, 20, "Enabled"));
 
 		int border = 60;
-		nameField = new GuiTextField(fontRendererObj, border, 70, width - border * 2, 12);
-		matcherField = new GuiTextField(fontRendererObj, border, 110, width - border * 2, 12);
-		replacementField = new GuiTextField(fontRendererObj, border, 150, width - border * 2, 12);
-		testField = new GuiTextField(fontRendererObj, border, 240, width - border * 2, 12);
+		nameField = new GuiTextField(width / 2, fontRendererObj, border, 70, width - border * 2, 12);
+		matcherField = new GuiTextField(width / 2, fontRendererObj, border, 110, width - border * 2, 12);
+		replacementField = new GuiTextField(width / 2, fontRendererObj, border, 150, width - border * 2, 12);
+		testField = new GuiTextField(width / 2, fontRendererObj, border, 240, width - border * 2, 12);
 
 		nameField.setEnableBackgroundDrawing(false);
 		matcherField.setEnableBackgroundDrawing(false);
@@ -196,7 +197,12 @@ public class GuiEditor extends GuiScreen {
 
 	@Override
 	protected void mouseClicked(int par1, int par2, int par3) {
-		super.mouseClicked(par1, par2, par3);
+		try{
+			super.mouseClicked(par1, par2, par3);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		nameField.mouseClicked(par1, par2, par3);
 		matcherField.mouseClicked(par1, par2, par3);
 		replacementField.mouseClicked(par1, par2, par3);
@@ -205,8 +211,11 @@ public class GuiEditor extends GuiScreen {
 
 	@Override
 	public void handleMouseInput() {
-		super.handleMouseInput();
-
+		try {
+			super.handleMouseInput();
+		} catch(IOException e) {
+				e.printStackTrace();
+		}
 		int w = Mouse.getEventDWheel();
 		if(w < 0)
 			actionPerformed((GuiButton) buttonList.get(1));
@@ -216,8 +225,11 @@ public class GuiEditor extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char par1, int par2) {
-		super.keyTyped(par1, par2);
-
+		try {
+			super.keyTyped(par1, par2);
+		} catch (IOException e) {
+				e.printStackTrace();
+		}
 		if(par1 == 9) {
 			boolean shift = isShiftKeyDown();
 			boolean nameFocus = nameField.isFocused();

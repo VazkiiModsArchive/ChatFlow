@@ -6,10 +6,10 @@ import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 import vazkii.chatflow.gui.GuiEditor;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 public class KeyHandler {
 
@@ -22,7 +22,7 @@ public class KeyHandler {
 	@SubscribeEvent
 	public void playerTick(ClientTickEvent event) {
 		if(event.phase == Phase.START) {
-			if(key.getIsKeyPressed())
+			if(key.isKeyDown())
 				Minecraft.getMinecraft().displayGuiScreen(new GuiEditor());
 		}
 	}
