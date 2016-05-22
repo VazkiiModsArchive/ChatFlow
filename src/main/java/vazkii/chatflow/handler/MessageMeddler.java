@@ -1,11 +1,11 @@
 package vazkii.chatflow.handler;
 
-import vazkii.chatflow.ChatFlow;
-import vazkii.chatflow.helper.Replacement;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import vazkii.chatflow.ChatFlow;
+import vazkii.chatflow.helper.Replacement;
 
 public final class MessageMeddler {
 
@@ -14,29 +14,37 @@ public final class MessageMeddler {
 
 	@SubscribeEvent
 	public void onMessageReceived(ClientChatReceivedEvent event) {
-		String originalMessage = event.message.getFormattedText();
+		String originalMessage = event.getMessage().getFormattedText();
+		
+		while(originalMessage.startsWith(TextFormatting.RESET.toString()))
+			originalMessage = originalMessage.substring(2);
+		while(originalMessage.endsWith(TextFormatting.RESET.toString()))
+			originalMessage = originalMessage.substring(0, originalMessage.length() - 2);
+		
+		System.out.println(originalMessage);
 
-		String regex = "\u00A7r(.*\u00A7r)";
-		while(originalMessage.matches(".*" + regex + ".*"))
-			originalMessage = originalMessage.replaceFirst(regex, "$1");
-		originalMessage = originalMessage.substring(0, originalMessage.length() - 2);
+		if(originalMessage.length() > 0) {
+			String regex = "\u00A7r(.*\u00A7r)";
+			while(originalMessage.matches(".*" + regex + ".*"))
+				originalMessage = originalMessage.replaceFirst(regex, "$1");
 
-		String message = originalMessage;
-		sendToNotification = false;
+			String message = originalMessage;
+			sendToNotification = false;
 
-		message = meddleWithMessage(message, false, false);
+			message = meddleWithMessage(message, false, false);
 
-		if(message.isEmpty())
-			event.setCanceled(true);
+			if(message.isEmpty())
+				event.setCanceled(true);
 
-		if(!event.isCanceled() && sendToNotification) {
-			int time = 20 + message.length() / 2;
-			ToastHandler.setTooltip(message, time);
-			event.setCanceled(true);
+			if(!event.isCanceled() && sendToNotification) {
+				int time = 20 + message.length() / 2;
+				ToastHandler.setTooltip(message, time);
+				event.setCanceled(true);
+			}
+
+			if(!message.equals(originalMessage))
+				event.setMessage(new TextComponentString(message));
 		}
-
-		if(!message.equals(originalMessage))
-			event.message = new ChatComponentText(message);
 	}
 
 	public static String meddleWithMessage(String message, boolean controlExclusive, boolean replaceControl) {
@@ -60,7 +68,7 @@ public final class MessageMeddler {
 
 			message = message.replaceAll(matcher, replacement);
 		} catch(Exception e) {
-			return EnumChatFormatting.RED + "" + EnumChatFormatting.UNDERLINE + "ERROR: " + e.getMessage();
+			return TextFormatting.RED + "" + TextFormatting.UNDERLINE + "ERROR: " + e.getMessage();
 		}
 		return message;
 	}

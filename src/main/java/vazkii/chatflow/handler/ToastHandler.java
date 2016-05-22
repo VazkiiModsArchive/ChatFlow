@@ -1,14 +1,13 @@
 package vazkii.chatflow.handler;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-
-import org.lwjgl.opengl.GL11;
-
-import vazkii.chatflow.helper.TransientScaledResolution;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -24,9 +23,9 @@ public class ToastHandler {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void drawDislocationFocusHUD(RenderGameOverlayEvent.Post event) {
-		if (event.type == ElementType.ALL && tooltipDisplayTicks > 0 && !(currentTooltip==null||currentTooltip.length()==0)) {
+		if (event.getType() == ElementType.ALL && tooltipDisplayTicks > 0 && !(currentTooltip==null||currentTooltip.length()==0)) {
 			Minecraft mc = Minecraft.getMinecraft();
-			TransientScaledResolution var5 = new TransientScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+			ScaledResolution var5 = new ScaledResolution(mc);
 			int var6 = var5.getScaledWidth();
 			int var7 = var5.getScaledHeight();
 			FontRenderer var8 = mc.fontRendererObj;

@@ -4,15 +4,14 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.EnumChatFormatting;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.util.text.TextFormatting;
 import vazkii.chatflow.ChatFlow;
 import vazkii.chatflow.handler.MessageMeddler;
 import vazkii.chatflow.helper.Replacement;
@@ -136,7 +135,7 @@ public class GuiEditor extends GuiScreen {
 		matcherField.setText(r.matcher);
 		replacementField.setText(r.replacement);
 		((GuiButton) buttonList.get(6)).displayString = r.notification ? "Notification" : "Chat";
-		((GuiButton) buttonList.get(7)).displayString = r.enabled ? EnumChatFormatting.GREEN + "Enabled" : EnumChatFormatting.RED + "Disabled";
+		((GuiButton) buttonList.get(7)).displayString = r.enabled ? TextFormatting.GREEN + "Enabled" : TextFormatting.RED + "Disabled";
 	}
 
 	@Override
@@ -153,20 +152,20 @@ public class GuiEditor extends GuiScreen {
 		drawCenteredString(fontRendererObj, index + 1 + " / " + ChatFlow.replacements.size(), width / 2, 35, 0xFFFFFF);
 
 		if(shiftNotice > 0)
-			fontRendererObj.drawStringWithShadow(EnumChatFormatting.RED + "Shift-click to delete", width / 2 - 170, 20, 0xFFFFFF);
+			fontRendererObj.drawStringWithShadow(TextFormatting.RED + "Shift-click to delete", width / 2 - 170, 20, 0xFFFFFF);
 
-		drawCenteredString(fontRendererObj, "Tip: use" + EnumChatFormatting.ITALIC + "^message$" + EnumChatFormatting.RESET + " as the Matcher and an empty Replacement to prevent that message from appearing in chat.", width / 2, replacementField.yPosition + replacementField.height, 0x44FFFFFF);
+		drawCenteredString(fontRendererObj, "Tip: use" + TextFormatting.ITALIC + "^message$" + TextFormatting.RESET + " as the Matcher and an empty Replacement to prevent that message from appearing in chat.", width / 2, replacementField.yPosition + replacementField.height, 0x44FFFFFF);
 		drawCenteredString(fontRendererObj, "Use ~ as a replacement for the control character. Use \\~ to write ~.", width / 2, replacementField.yPosition + replacementField.height + 11, 0x44FFFFFF);
 
-		drawString(fontRendererObj, EnumChatFormatting.BOLD + "Message:", testField.xPosition + 10, testField.yPosition + testField.height + 5, 0xFFFFFF);
-		drawString(fontRendererObj, EnumChatFormatting.BOLD + "Output:", testField.xPosition + 10, testField.yPosition + testField.height + 30, 0xFFFFFF);
+		drawString(fontRendererObj, TextFormatting.BOLD + "Message:", testField.xPosition + 10, testField.yPosition + testField.height + 5, 0xFFFFFF);
+		drawString(fontRendererObj, TextFormatting.BOLD + "Output:", testField.xPosition + 10, testField.yPosition + testField.height + 30, 0xFFFFFF);
 
 		boolean matches = false;
 		try {
 			matches = test.matches(".*" + matcherField.getText() + ".*");
 		} catch(Exception e) { }
 
-		drawString(fontRendererObj, EnumChatFormatting.ITALIC + (ChatFlow.replacements.get(index).notification && matches && ChatFlow.replacements.get(index).enabled ? "(Toast Notification)" : "(Chat Field)"), testField.xPosition + 13 + fontRendererObj.getStringWidth(EnumChatFormatting.BOLD + "Output:"), testField.yPosition + testField.height + 30, 0xFFFFFF);
+		drawString(fontRendererObj, TextFormatting.ITALIC + (ChatFlow.replacements.get(index).notification && matches && ChatFlow.replacements.get(index).enabled ? "(Toast Notification)" : "(Chat Field)"), testField.xPosition + 13 + fontRendererObj.getStringWidth(TextFormatting.BOLD + "Output:"), testField.yPosition + testField.height + 30, 0xFFFFFF);
 
 		String msg = MessageMeddler.meddleWithMessage(test, true, true);
 		String repl = MessageMeddler.meddleWithMessage(test, false, true);
