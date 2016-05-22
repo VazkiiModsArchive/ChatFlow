@@ -1,2 +1,2 @@
-ant build
+sh gradlew
 pause
